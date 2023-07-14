@@ -1,46 +1,28 @@
-chrome.runtime.onInstalled.addListener((details) => {
+// Background script
+chrome.runtime.onInstalled.addListener((() => {
     chrome.contextMenus.create({
-        title: "MW Word Checker",
+        title: "Definition",
         id: "contextMenu1",
         contexts: ["page", "selection"]
-    })
+    });
+
     chrome.contextMenus.create({
-        title: "Read Text",
+        title: "Synonym",
         id: "contextMenu2",
         contexts: ["page", "selection"]
-    })
-})
+    });
 
+}));
 
-chrome.contextMenus.onClicked.addListener((event) => {
-    // console.log(event)
-    //Search the highlighted text
-    // chrome.search.query({
-    //     disposition: "NEW_TAB",
-    //     text: `synonym ${event.selectionText}`, //`
-    // })
-    if (event.menuItemId === "contextMenu1") {
+chrome.contextMenus.onClicked.addListener(((info, tab) => {
+    if (info.menuItemId === "contextMenu1" && info.selectionText) {
         chrome.tabs.create({
-            url: `https://www.merriam-webster.com/dictionary/${event.selectionText}`
+            url: `https://www.merriam-webster.com/dictionary/${info.selectionText}`
+        });
+    } else if (info.menuItemId === "contextMenu2" && info.selectionText) {
+        chrome.tabs.create({
+            url: `https://www.merriam-webster.com/thesaurus/${info.selectionText}`
         })
-    } else if (event.menuItemId === "contextMenu2") {
-        chrome.tts.speak(event.selectionText, { 'rate': 1.3 })
     }
-})
 
-
-
-
-//Shows child menus for parent menu
-// chrome.contextMenus.create({
-//     title: "Test Context Menu 1",
-//     id: "contextMenu2",
-//     parentId: "contextMenu1",
-//     contexts: ["page", "selection"]
-// })
-// chrome.contextMenus.create({
-//     title: "Test Context Menu 2",
-//     id: "contextMenu3",
-//     parentId: "contextMenu1",
-//     contexts: ["page", "selection"]
-// })
+}));
